@@ -10,41 +10,45 @@ const uuid = require("uuid")
 class fileController {
     async addFile(req, res) {
 
-        let files = req.files.file;
+        try {
+                let files = req.files.file;
 
-        const arrayImages = []
-        const nameZip =  uuid.v4();
+                const arrayImages = []
+                const nameZip =  uuid.v4();
 
-        if(isArray(files) ) {
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
+                if(isArray(files) ) {
+                    for (let i = 0; i < files.length; i++) {
+                        const file = files[i];
 
-                const fileName = file.name.replace(/\.png$|\.jpg$|\.svg$/, "");
+                        const fileName = file.name.replace(/\.png$|\.jpg$|\.svg$/, "");
+                        const cardImageSource = fileName + ".webp";
+                        const filePath = path.join(req.pathStatic, cardImageSource);
+
+
+                        arrayImages.push(cardImageSource)
+                        
+                        await fileService.addFileToDB(filePath, file, cardImageSource);
+                    }
+                    
+                    await fileService.convertToZip([...arrayImages], req, nameZip) 
+                    return res.json({nameZip})
+                }  
+                
+                const fileName = files.name.replace(/\.png$|\.jpg$|\.svg$/, "");    
                 const cardImageSource = fileName + ".webp";
                 const filePath = path.join(req.pathStatic, cardImageSource);
 
-
                 arrayImages.push(cardImageSource)
-                
-                await fileService.addFileToDB(filePath, file, cardImageSource);
-            }
-            
-            await fileService.convertToZip([...arrayImages], req, nameZip) 
-            return res.json({nameZip})
-        }  
-        
-        const fileName = files.name.replace(/\.png$|\.jpg$|\.svg$/, "");    
-        const cardImageSource = fileName + ".webp";
-        const filePath = path.join(req.pathStatic, cardImageSource);
 
-        arrayImages.push(cardImageSource)
-
-        await fileService.addFileToDB(filePath, files, cardImageSource);
+                await fileService.addFileToDB(filePath, files, cardImageSource);
 
 
-        await fileService.convertToZip([...arrayImages], req, nameZip)
+                await fileService.convertToZip([...arrayImages], req, nameZip)
 
-        return res.json({nameZip})
+                return res.json({nameZip})
+        }catch {
+            return res.json({message: "Что-то пошло не так"})
+        }
     }
 
 /*
