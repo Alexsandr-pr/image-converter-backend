@@ -11,7 +11,7 @@ class FileService {
         try {
             // Используем асинхронный метод sharp для преобразования и перемещения файла
             await sharp(file.data)
-                .toFormat("webp", { quality: 70 })
+                .toFormat("webp", { quality: 100 })
                 .toFile(destinationPath);
         } catch (error) {
             console.log(error);
