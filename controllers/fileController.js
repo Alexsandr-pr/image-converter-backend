@@ -11,6 +11,9 @@ class fileController {
     async addFile(req, res) {
 
         try {
+
+                const id = req.params.id;
+                console.log(id)
                 let files = req.files.file;
 
                 const arrayImages = []
@@ -27,7 +30,7 @@ class fileController {
 
                         arrayImages.push(cardImageSource)
                         
-                        await fileService.addFileToDB(filePath, file, cardImageSource);
+                        await fileService.addFileToDB(filePath, file, id);
                     }
                     
                     await fileService.convertToZip([...arrayImages], req, nameZip) 
@@ -40,29 +43,17 @@ class fileController {
 
                 arrayImages.push(cardImageSource)
 
-                await fileService.addFileToDB(filePath, files, cardImageSource);
-
+                await fileService.addFileToDB(filePath, files, id);
 
                 await fileService.convertToZip([...arrayImages], req, nameZip)
 
                 return res.json({nameZip})
+                
         }catch {
             return res.json({message: "Что-то пошло не так"})
         }
     }
 
-/*
-    async  downloadFile(req, res) {
-        try {
-
-            const outputPath = path.join(req.pathPublic, `${req.params.id}.zip`);
-            return res.download(outputPath, "archive")
-            
-        } catch (err) {
-            console.error(err);
-        }
-    }
-    */
     async downloadFile(req, res) {
         try {
             const outputPath = path.join(req.pathPublic, `${req.params.id}.zip`);

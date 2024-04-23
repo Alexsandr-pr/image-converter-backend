@@ -7,20 +7,20 @@ const fs = require('fs');
 
 class FileService {
 
-    async moveFile(file, destinationPath) {
+    async moveFile(file, destinationPath, id) {
         try {
             // Используем асинхронный метод sharp для преобразования и перемещения файла
             await sharp(file.data)
-                .toFormat("webp", { quality: 100 })
+                .toFormat("webp", { quality: +id })
                 .toFile(destinationPath);
         } catch (error) {
             console.log(error);
         }
     }
 
-    async addFileToDB(filePath, file) {
+    async addFileToDB(filePath, file, id) {
         try {
-            await this.moveFile(file, filePath);
+            await this.moveFile(file, filePath, id);
 
         } catch (error) {
             console.log(error);

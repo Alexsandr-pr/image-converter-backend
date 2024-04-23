@@ -4,7 +4,7 @@ const router = new Router();
 
 
 
-router.post("/image", fileController.addFile)
+router.post("/image/:id", fileController.addFile)
 router.post("/get/:id", fileController.downloadFile)
 
 
